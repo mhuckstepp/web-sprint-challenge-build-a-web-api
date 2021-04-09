@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { checkActionsId } = require("./actions-middleware");
+const { checkActionsId, checkBody } = require("./actions-middleware");
 const { getAll, insert, update, remove } = require("./actions-model");
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.get("/:id", checkActionsId, (req, res, next) => {
   res.status(200).json(req.newBody);
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", checkBody, (req, res, next) => {
   insert(req.body)
     .then((action) => {
       res.status(201).json(action);
@@ -29,7 +29,7 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.put("/:id", checkActionsId, (req, res, next) => {
+router.put("/:id", checkActionsId, checkBody, (req, res, next) => {
   update(req.params.id, req.body)
     .then((action) => {
       res.status(200).json(action);

@@ -2,8 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 
-const { checkProjectsId } = require("./projects-middleware");
-const { getAll, insert, update, remove } = require("./projects-model");
+const { checkProjectsId, checkBody } = require("./projects-middleware");
+const {
+  getAll,
+  insert,
+  update,
+  remove,
+  getProjectActions,
+} = require("./projects-model");
 
 router.get("/", (req, res, next) => {
   getAll()
@@ -19,7 +25,17 @@ router.get("/:id", checkProjectsId, (req, res, next) => {
   res.status(200).json(req.newBody);
 });
 
-router.post("/", (req, res, next) => {
+router.get("/:id/actions", checkProjectsId, (req, res, next) => {
+  getProjectActions(req.params.id)
+    .then((actions) => {
+      res.status(200).json(actions);
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
+router.post("/", checkBody, (req, res, next) => {
   insert(req.body)
     .then((action) => {
       res.status(201).json(action);
@@ -29,7 +45,7 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.put("/:id", checkProjectsId, (req, res, next) => {
+router.put("/:id", checkProjectsId, checkBody, (req, res, next) => {
   update(req.params.id, req.body)
     .then((action) => {
       res.status(200).json(action);

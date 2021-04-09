@@ -15,6 +15,21 @@ function checkActionsId(req, res, next) {
     });
 }
 
+function checkBody(req, res, next) {
+  if (!Object.keys(req.body).length) {
+    res.status(400).json({ message: "please send a valid project or action" });
+  } else if (!req.body.project_id) {
+    res.status(400).json({ message: "please send a valid project id" });
+  } else if (!req.body.description) {
+    res.status(400).json({ message: "please send a valid description" });
+  } else if (!req.body.notes) {
+    res.status(400).json({ message: "please send valid notes" });
+  } else {
+    next();
+  }
+}
+
 module.exports = {
   checkActionsId,
+  checkBody,
 };
